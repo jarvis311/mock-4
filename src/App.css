@@ -1,0 +1,22 @@
+.Quotes_card > span{
+    margin-left: 85%;
+    background: rgba(219, 218, 218, 0.61);
+    font-size: 16px;
+    padding: 5px;
+    color: black;
+}
+.spinner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    text-align: center;
+    margin-left: 110px;
+
+}
+.Welcome{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
