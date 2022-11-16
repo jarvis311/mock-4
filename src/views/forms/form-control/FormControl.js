@@ -1,8 +1,16 @@
 import React, { useState } from 'react'
-import { CButton, CCol, CForm, CFormCheck, CFormInput, CFormSelect } from '@coreui/react'
-import { db } from 'src/firebase/firebase'
-import { addDoc, collection } from 'firebase/firestore'
+import {
+  CButton,
+  CCol,
+  CForm,
+  CFormCheck,
+  CFormFeedback,
+  CFormInput,
+  CFormSelect,
+} from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { addUserData } from 'src/Store/userDataSlice'
 
 const FormControl = () => {
   const [age, setAge] = useState('')
@@ -11,63 +19,104 @@ const FormControl = () => {
   const [gender, setGender] = useState('')
   const [email, setEmail] = useState('')
   const [role, setRole] = useState('')
+  const [checked, setChecked] = useState(false)
+  const [validated, setValidated] = useState(false)
   const navigate = useNavigate()
-  const tablename = collection(db, 'userData')
+
+  const dispatch = useDispatch()
+  const userData = {
+    username,
+    email,
+    age,
+    dob,
+    gender,
+    role,
+    checked,
+  }
   const handleSubmit = (e) => {
     e.preventDefault()
-    addDoc(tablename, {
-      username,
-      email,
-      age,
-      dob,
-      gender,
-      role,
-      time: Date().toLocaleString(),
-    }).then(() => {
-      console.log('Data is Added')
-      setTimeout(() => {
+    const form = e.currentTarget
+    if (form.checkValidity() === false) {
+      e.stopPropagation()
+    }
+    setValidated(true)
+    if (
+      username !== '' &&
+      age !== '' &&
+      email !== '' &&
+      dob !== '' &&
+      gender !== '' &&
+      role !== '' &&
+      checked !== true
+    ) {
+      try {
+        
+        dispatch(addUserData(userData))
+        setUsername('')
+        setAge('')
+        setDob('')
+        setGender('')
+        setEmail('')
+        setRole('')
+        setChecked('')
+
         navigate('/quotes')
-      }, 500)
-    })
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   return (
-    <CForm onSubmit={handleSubmit} className="row g-3">
+    <CForm
+      onSubmit={handleSubmit}
+      noValidate
+      validated={validated}
+      className="row g-3 needs-validation"
+    >
       <CCol xs={6}>
         <CFormInput
-          required
+          value={username}
           onChange={(e) => setUsername(e.target.value)}
           id="inputUsername"
           label="Username"
-          placeholder="Enter Username"
           type="text"
+          feedbackInvalid="Please enter the username"
+          required
         />
       </CCol>
       <CCol md={6}>
         <CFormInput
-          required
           type="email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
           id="inputEmail4"
           label="Email"
+          feedbackInvalid="Please enter the email"
+          aria-describedby="exampleFormControlInputHelpInline"
+          required
         />
       </CCol>
       <CCol md={6}>
         <CFormInput
-          required
+          value={age}
           onChange={(e) => setAge(e.target.value)}
           type="number"
           id="inputage"
           label="Age"
+          feedbackInvalid="Please enter the age"
+          required
         />
       </CCol>
       <CCol md={6}>
         <CFormInput
-          required
+          value={dob}
           onChange={(e) => setDob(e.target.value)}
           type="date"
           id="dob"
           label="Date of Birth"
+          feedbackInvalid="Please choose the date of birth"
+          required
         />
       </CCol>
       <label>Select gender</label>
@@ -75,8 +124,8 @@ const FormControl = () => {
         value="Male"
         onChange={(e) => setGender(e.target.value)}
         type="radio"
-        name="flexRadioDefault"
-        id="flexRadioDefault1"
+        name="radio-stacked"
+        id="validationFormCheck2"
         label="Male"
         required
       />
@@ -84,14 +133,23 @@ const FormControl = () => {
         value="Female"
         onChange={(e) => setGender(e.target.value)}
         type="radio"
-        name="flexRadioDefault"
-        id="flexRadioDefault2"
+        name="radio-stacked"
+        id="validationFormCheck2"
         label="Female"
+        feedbackInvalid="Please Select gender"
         required
       />
+
       <CCol md={4}>
-        <CFormSelect onChange={(e) => setRole(e.target.value)} required id="inputRole" label="Role">
-          <option>Choose Your Role</option>
+        <CFormSelect
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          feedbackInvalid="Please provide a valid role"
+          id="inputRole"
+          label="Role"
+          required
+        >
+          <option value="">Choose Your Role</option>
           <option value="Front-End">Front-End</option>
           <option value="Back-End">Back-End</option>
           <option value="Full-Stack">Full-Stack</option>
@@ -99,7 +157,17 @@ const FormControl = () => {
         </CFormSelect>
       </CCol>
       <CCol xs={12}>
-        <CFormCheck required type="checkbox" id="gridCheck" label="Check me out" />
+        <CFormCheck
+          type="checkbox"
+          id="invalidCheck"
+          value={!checked}
+          onChange={(e) => setChecked(e.target.value)}
+          label="Agree to terms and conditions"
+          feedbackInvalid="You must agree before submitting"
+          required
+          onClick={() => setChecked(!checked)}
+        />
+        <CFormFeedback invalid>You must agree before submitting.</CFormFeedback>
       </CCol>
       <CCol xs={12}>
         <CButton type="submit">Save Data</CButton>

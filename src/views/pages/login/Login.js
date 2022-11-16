@@ -15,54 +15,21 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
-import { userAction } from 'src/Store'
 import { useDispatch } from 'react-redux'
+import { userSignIn } from 'src/Store/userDataSlice'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [validated, setValidated] = useState(false)
   const navigate = useNavigate()
 
   const dispatch = useDispatch()
   const submitHandler = (e) => {
     e.preventDefault()
-    fetch(
-      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyATMOBVAJ0ZZA7a7EBP2WbM2oTPRD0QZwk',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          returnSecureToken: true,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    )
-      .then(async (res) => {
-        if (res.ok) {
-          setEmail('')
-          setPassword('')
-          navigate('/dashboard')
-          return res.json()
-        } else {
-          return await res.json((res_1) => {
-            let errorMessage = 'Authantication failed'
-            throw new Error(errorMessage)
-          })
-        }
-      })
-      .then((data) => {
-        console.log('>>>>>', data)
-        dispatch(userAction.loginHandler(data.idToken))
-        localStorage.setItem('email', data.email)
-        localStorage.setItem('token', data.idToken)
-        localStorage.setItem('username', data.displayName)
-      })
-      .catch((error) => {
-        alert(error.message)
-      })
+    const data = {email, password}
+    dispatch(userSignIn(data))
+    navigate('/dashboard')
   }
 
   return (
@@ -73,7 +40,7 @@ const Login = () => {
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm onSubmit={submitHandler}>
+                  <CForm onSubmit={submitHandler} noValidate validated={validated}>
                     <h1>Login</h1>
                     <p className="text-medium-emphasis">Sign In to your account</p>
                     <CInputGroup className="mb-3">
@@ -84,6 +51,7 @@ const Login = () => {
                         placeholder="Username"
                         autoComplete="username"
                         onChange={(e) => setEmail(e.target.value)}
+                        feedbackInvalid="Please enter the email"
                         required
                       />
                     </CInputGroup>
@@ -94,7 +62,7 @@ const Login = () => {
                       <CFormInput
                         type="password"
                         placeholder="Password"
-                        autoComplete="current-password"
+                        feedbackInvalid="Please enter the password"
                         onChange={(e) => setPassword(e.target.value)}
                         required
                       />
@@ -103,11 +71,6 @@ const Login = () => {
                       <CCol xs={6}>
                         <CButton type="submit" color="primary" className="px-4">
                           Login
-                        </CButton>
-                      </CCol>
-                      <CCol xs={6} className="text-right">
-                        <CButton color="link" className="px-0">
-                          Forgot password?
                         </CButton>
                       </CCol>
                     </CRow>

@@ -12,11 +12,14 @@ import { cilUser, cilAccountLogout } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { userDataAction } from 'src/Store/userDataSlice'
 
 const AppHeaderDropdown = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const handleLogout = () => {
-    localStorage.clear()
+    dispatch(userDataAction.userLogOut())
     navigate('/')
   }
   const username = localStorage.getItem('username')

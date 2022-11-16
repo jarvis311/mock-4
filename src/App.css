@@ -1,22 +1,51 @@
-.Quotes_card > span{
-    margin-left: 85%;
-    background: rgba(219, 218, 218, 0.61);
-    font-size: 16px;
-    padding: 5px;
-    color: black;
+.Quotes_card > span {
+  margin-left: 85%;
+  background: rgba(219, 218, 218, 0.61);
+  font-size: 16px;
+  padding: 5px;
+  color: black;
 }
-.spinner{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, 50%);
-    text-align: center;
-    margin-left: 110px;
-
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  text-align: center;
+  margin-left: 110px;
 }
-.Welcome{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.Welcome {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.pagination {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5rem;
+  font-size: 1.5rem;
+  gap: 5px;
+  text-decoration: none;
+  border: 1px solid rgb(148, 141, 141);
+  height: 4.8vh;
+  width: 80%;
+  position: absolute;
+  bottom: 50px;
+}
+.pagination .page-num {
+  padding: 5px 15px;
+  cursor: pointer;
+  font-weight: 400;
+}
+.pagination .page-num:hover {
+  background-color: rgb(91, 91, 241);
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+.pagination .active {
+  background-color: rgb(152, 152, 240);
 }

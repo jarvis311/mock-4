@@ -19,9 +19,16 @@ const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
+  const [validated, setValidated] = useState(false)
   const navigate = useNavigate()
   const isLogin = false
-  const onSubmitHandler = () => {
+  const onSubmitHandler = (e) => {
+    e.preventDefault()
+    const form = e.currentTarget
+    if (form.checkValidity() === false) {
+      e.stopPropagation()
+    }
+    setValidated(true)
     if (isLogin) {
     } else {
       fetch(
@@ -42,10 +49,11 @@ const Register = () => {
         if (res.ok) {
           alert('registration is succesfull')
           setEmail('')
+          setUsername('')
           setPassword('')
           setTimeout(() => {
             navigate('/')
-          }, 1500)
+          }, 800)
         } else {
           console.log('Error')
           const data = await res.json((res_1) => {})
@@ -53,7 +61,6 @@ const Register = () => {
           if (data && data.error && data.error.message) {
             errorMessage = data.error.message
           }
-          alert(errorMessage)
         }
       })
     }
@@ -66,7 +73,12 @@ const Register = () => {
           <CCol md={9} lg={7} xl={6}>
             <CCard className="mx-4">
               <CCardBody className="p-4">
-                <CForm onSubmit={onSubmitHandler}>
+                <CForm
+                  onSubmit={onSubmitHandler}
+                  noValidate
+                  validated={validated}
+                  className="row g-3 needs-validation"
+                >
                   <h1>Register</h1>
                   <p className="text-medium-emphasis">Create your account</p>
                   <CInputGroup className="mb-3">
@@ -76,6 +88,8 @@ const Register = () => {
                     <CFormInput
                       placeholder="Username"
                       autoComplete="username"
+                      feedbackInvalid="Please enter the username"
+                      required
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
@@ -87,6 +101,8 @@ const Register = () => {
                       placeholder="Email"
                       autoComplete="email"
                       value={email}
+                      required
+                      feedbackInvalid="Please enter the email"
                     />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
@@ -99,6 +115,8 @@ const Register = () => {
                       placeholder="Password"
                       autoComplete="new-password"
                       value={password}
+                      required
+                      feedbackInvalid="Please enter the password"
                     />
                   </CInputGroup>
                   <div className="d-grid">
